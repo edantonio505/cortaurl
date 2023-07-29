@@ -77,7 +77,12 @@ def hello_world(hashurl=None):
         with open("hashes.json", "w") as outfile:
             outfile.write(serialized)
 
-        new_hash2 = "http://192.168.0.211:5000/"+new_hash 
+
+
+        # usar ip interna de ustedes
+        # o directamente ngrok
+
+        new_hash2 = "https://97ff-74-108-219-64.ngrok-free.app/"+new_hash 
         img = qrcode.make(new_hash2)
         image_path = "static/images/"+new_hash+".png"
         img.save(image_path)
