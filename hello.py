@@ -7,6 +7,7 @@ import random
 import hashlib
 import json
 from flask import redirect
+import qrcode
 
 app = Flask(__name__)
 
@@ -34,13 +35,13 @@ def hello_world(hashurl=None):
     # output: hash de una url
     new_hash = None 
     website_result = None
-
-
-    with open("hashes.json", "r") as archivo:
-        d = json.load(archivo)
+    new_hash2 = None
+    image_path = None
 
     if request.method == 'GET' and hashurl != None:
-        print(hashurl)
+        with open("hashes.json", "r") as archivo:
+            d = json.load(archivo)
+
         for dictionario in d:
             if hashurl in dictionario:
                 website = dictionario[hashurl]
@@ -67,7 +68,8 @@ def hello_world(hashurl=None):
         dictionario[new_hash] = url
 
         d = None
-
+        with open("hashes.json", "r") as archivo:
+            d = json.load(archivo)
 
         d.append(dictionario)
         serialized = json.dumps(d)
@@ -75,6 +77,9 @@ def hello_world(hashurl=None):
         with open("hashes.json", "w") as outfile:
             outfile.write(serialized)
 
-        new_hash = "http://127.0.0.1:5000/"+new_hash 
+        new_hash2 = "http://192.168.0.211:5000/"+new_hash 
+        img = qrcode.make(new_hash2)
+        image_path = "static/images/"+new_hash+".png"
+        img.save(image_path)
 
-    return render_template('index.html', hash=new_hash)
+    return render_template('index.html', hash=new_hash2, qrimage=image_path)

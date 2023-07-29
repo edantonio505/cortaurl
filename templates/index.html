@@ -13,12 +13,22 @@
             <button>Acortar</button>
         </form>
 
+        <br>
+        <br>
+
         <div id="url-acortado">
             <!-- url acortado -->
             {% if hash %}
                 {{ hash }}
             {% endif %}    
         </div>
+
+        <br><br>
+        
+        <!-- codigo qr -->
+        {% if hash %}
+            <img src="{{ qrimage }}" />
+        {% endif %} 
     </body>
 </html>
 
