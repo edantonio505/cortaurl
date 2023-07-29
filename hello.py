@@ -6,10 +6,9 @@ import bcrypt
 import random
 import hashlib
 import json
-
+from flask import redirect
 
 app = Flask(__name__)
-
 
 
 
@@ -29,12 +28,32 @@ app = Flask(__name__)
 
 
 @app.route('/', methods=['GET', 'POST'])
-def hello_world():
+@app.route('/<hashurl>')
+def hello_world(hashurl=None):
     # input url
     # output: hash de una url
+    new_hash = None 
+    website_result = None
 
-    new_hash = None
 
+    with open("hashes.json", "r") as archivo:
+        d = json.load(archivo)
+
+    if request.method == 'GET' and hashurl != None:
+        print(hashurl)
+        for dictionario in d:
+            if hashurl in dictionario:
+                website = dictionario[hashurl]
+                website_result = website
+                break
+        
+        if website_result:
+            if "https:" not in website:
+                website = "https://"+website
+
+            return render_template('redirect.html', website=website)
+
+            
     if request.method == 'POST':
         url = request.form['url']
         bytes = url.encode('utf-8')
@@ -48,8 +67,7 @@ def hello_world():
         dictionario[new_hash] = url
 
         d = None
-        with open("hashes.json", "r") as archivo:
-            d = json.load(archivo)
+
 
         d.append(dictionario)
         serialized = json.dumps(d)
